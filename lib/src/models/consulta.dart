@@ -11,7 +11,7 @@ class Consulta {
   final StatusConsulta status;
   final String? observacoes;
 
-  const Consulta({
+  Consulta({
     required this.id,
     required this.medico,
     required this.paciente,
@@ -21,6 +21,7 @@ class Consulta {
     this.observacoes,
   });
 
+  // O método copyWith é usado na Home para atualizar o status
   Consulta copyWith({
     int? id,
     Medico? medico,
@@ -39,5 +40,32 @@ class Consulta {
       status: status ?? this.status,
       observacoes: observacoes ?? this.observacoes,
     );
+  }
+
+  factory Consulta.fromJson(Map<String, dynamic> json) {
+    return Consulta(
+      id: json['id'],
+      medico: Medico.fromJson(json['medico']),
+      paciente: Paciente.fromJson(json['paciente']),
+      data: DateTime.parse(json['data']),
+      valor: (json['valor'] as num).toDouble(),
+      status: StatusConsulta.values.firstWhere(
+        (e) => e.name == json['status'],
+        orElse: () => StatusConsulta.agendada,
+      ),
+      observacoes: json['observacoes'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'medico': medico.toJson(),
+      'paciente': paciente.toJson(),
+      'data': data.toIso8601String(),
+      'valor': valor,
+      'status': status.name,
+      'observacoes': observacoes,
+    };
   }
 }
